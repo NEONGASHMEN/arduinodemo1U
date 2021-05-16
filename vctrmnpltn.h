@@ -12,6 +12,6 @@ class vctrmnpltn
 	public:
 	void cross(double a[3],double b[3]);
 	double resultant[3];
-};
+}; 
 
 #endif
