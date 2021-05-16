@@ -8,7 +8,7 @@
 #endif
 
 //Torquer params
-double A = 0.02;
+double A = 0.02;                    
 double n = 84;
 double saturation_current = 0.04;
 
