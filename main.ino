@@ -93,7 +93,7 @@ void loop() {
   Wire.requestFrom(magmeter_add,6,true);                    //0x03,04,05,06,07,08 LSB and MSB values
   Bx = ((Wire.read()<<8)|(Wire.read()))/1090.0;
   Bz = ((Wire.read()<<8)|(Wire.read()))/1090.0;
-  By = ((Wire.read()<<8)|(Wire.read()))/1090.0;             //Lsb per unit = 1090 for +/-1.3Ga (WTF IS GA ???? sounds like gay)
+  By = ((Wire.read()<<8)|(Wire.read()))/1090.0;             //Lsb per unit = 1090 for +/-1.3Ga
   Bx = Bx*1E-4;
   By = By*1E-4;
   Bz = Bz*1E-4;                                             //into Teslas
@@ -109,7 +109,7 @@ void loop() {
   double k = 67200.0;
   for(int i = 0;i < 3;i++)
   {
-    current[i] = (k*WxB[i])/(n*A);
+    current[i] = (k*WxB[i])/(n*A);                                                  //Bdot control
   }
 
   double sum_abs_current = abs(current[0])+abs(current[1])+abs(current[2]);
@@ -118,18 +118,10 @@ void loop() {
   {
     for(int i = 0;i < 3;i++)
     {
-      current[i] = (current[i]*saturation_current)/norm_current;
+      current[i] = (current[i]*saturation_current)/norm_current;                    //Saturation adjustment
     }
   }
 
   //-------------------------------------------------------//
 
-  Serial.print("Current: ");
-  for(int i = 0;i < 3;i++)
-  {
-    Serial.print(current[i],6);
-    Serial.print("  ");
-  }
-  Serial.println();
-  delay(500);
 }
