@@ -11,5 +11,7 @@
 double A = 0.02;                    
 double n = 84;
 double saturation_current = 0.04;
+double Sb = 0.3;
+double Sw = 0.3;
 
 #endif
