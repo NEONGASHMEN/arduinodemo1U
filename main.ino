@@ -13,7 +13,8 @@ double Bx_e,By_e,Bz_e;
 double Wx,Wy,Wz;
 double W[3];
 double Wx_e,Wy_e,Wz_e;
-
+double W_prev[3] = {0,0,0};
+double B_prev[3] = {0,0,0};
 double current[3];
 
 int c = 0;                                  //in error checking fn
@@ -66,6 +67,27 @@ void find_error()
   Serial.println(Wz_e);
 }
 
+void navigation(double B[3],double W[3])
+{
+  if(abs(B_prev[0]) + abs(B_prev[1]) + abs(B_prev[2]) + abs(W_prev[0]) + abs(W_prev[1]) + abs(W_prev[2]) == 0)
+  {
+    W_prev[0] = W[0];
+    W_prev[1] = W[1];
+    W_prev[2] = W[2];
+    B_prev[0] = B[0];
+    B_prev[1] = B[1];
+    B_prev[2] = B[2];
+  }
+  else
+  {
+    for(int i = 0;i < 3;i++)
+    {
+      W[i] = W_prev[i]*(1.0 - Sw) + Sw*W[i];
+      B[i] = B_prev[i]*(1.0 - Sb) + Sb*B[i];
+    } 
+  }
+}
+
 void loop() {
   // put your main code here, to run repeatedly:
   Wire.beginTransmission(gyro_add);
@@ -100,7 +122,8 @@ void loop() {
   B[0] = Bx;
   B[1] = By;
   B[2] = Bz;
-
+  navigation(B,W);                                          //filter
+  
   //----------------------------------------------------//
 
   vctrmnpltn vctr1;
