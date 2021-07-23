@@ -26,22 +26,6 @@ Fgrav = -(G*M*m/rho^2)*rhat;
 acc = Fgrav/m;
 
 %%Mag stuff
-% phiE = 0;
-% thetaE = acos(z/rho);
-% psiE = atan2(y,x);
-% latitude = 90-thetaE*180/pi;
-% longitude = psiE*180/pi;
-% rhokm = (rho)/1000;
-% [BN,BE,BD] = igrf('01-Jan-2020',latitude,longitude,rhokm,'geocentric');
-% %%%Convert NED (North East Down to X,Y,Z in ECI frame)
-% %%%First we need to create a rotation matrix from the NED frame to the 
-% %%%inertial frame
-% BNED = [BN;BE;BD]; 
-% BI = TIB(phiE,thetaE+pi,psiE)*BNED;
-% %BI = eye(3)*BNED;    
-% BB = TIBquat(q0123)'*BI;
-% %%%Convert to Tesla
-% BB = BB*1e-9;
 BI = [0;0;0];
 BI(3) = 0.008;
 BB = TIBquat(q0123)'*BI;
