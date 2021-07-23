@@ -1,7 +1,6 @@
 %%Orbit params
 Earth
 
-
 Altitude = 300*1000;
 Rad_mod = R + Altitude;
 Inclination = 98*pi/180;
