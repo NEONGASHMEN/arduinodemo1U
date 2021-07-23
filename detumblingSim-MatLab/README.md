@@ -6,4 +6,4 @@
     
     2. In 'Satellite.m' , BI(3) is the magnetic field strength of Helmholtz coil (in Teslas)
     
-    3. All magnetorquer parameters are defined in 'Magnetorquer_params.m', control algo in 'Control.m' , orbital parameters in 'Orbut.m' & mass parameters in 'Inertia.m'
+    3. All magnetorquer parameters are defined in 'Magnetorquer_params.m', control algo in 'Control.m' , orbital parameters in 'Orbit.m' & mass parameters in 'Inertia.m'
