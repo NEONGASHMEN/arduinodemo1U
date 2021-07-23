@@ -1,7 +1,4 @@
 function ptp = Quaternions2EulerAngles(q0123)
-%%ptp = quat2euler(q0123)
-%input is a Nx4 vector with quaternions.
-%output is a Nx3 vector of 3-2-1 euler angles
 
 q0 = q0123(:,1);
 q1 = q0123(:,2);
