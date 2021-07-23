@@ -1,6 +1,6 @@
 
-%%The following code and its dependencies have been created with the help
-%%from Asstnt Professor of University of South Alabama, Carlos Montalvo.
+% Copyright - Carlos Montalvo 2015
+%https://github.com/cmontalvo251/MATLAB/tree/master/ADCS_Seminar_Series
 
 
 %%Main
@@ -17,7 +17,6 @@ global Bfieldnav pqrdotnav Bfieldnavprev pqrdotnavprev
 %%Earth and orbit params
 Earth
 Orbit
-%%addpath './igrf'
 
 %%Initial Params
 x0 = Rad_mod;
