@@ -127,6 +127,19 @@ Zout = stateout(:,3);
 disp('Simulation completed');
 toc
 
+%%Print critical values
+t_dtmbl = 600;
+meanResidualW(1) = mean(abs(pqrdot_out(t_dtmbl:length(tout),1)));
+meanResidualW(2) = mean(abs(pqrdot_out(t_dtmbl:length(tout),2)));
+meanResidualW(3) = mean(abs(pqrdot_out(t_dtmbl:length(tout),3)));
+
+maxResidualW(1) = max(abs(pqrdot_out(t_dtmbl:length(tout),1)));
+maxResidualW(2) = max(abs(pqrdot_out(t_dtmbl:length(tout),2)));
+maxResidualW(3) = max(abs(pqrdot_out(t_dtmbl:length(tout),3)));
+
+disp(['Mean residual omega: ' num2str(meanResidualW)]);
+disp(['Max residual omega: ' num2str(maxResidualW)]);
+
 %%plot x y z
 fig0 = figure();
 plot(tout,Xout,'r-');
