@@ -42,6 +42,21 @@ muB = Control(Bfieldnav,pqrdotnav);
 Magtorquer_params
 current = muB/(n*A*tempVar);
 voltage = current*Rnet;
+cmprsn = zeros(length(voltAvail),3);
+for z = 1:length(voltAvail)
+    cmprsn(z,1) = voltAvail(z,1) - voltage(1);
+    cmprsn(z,2) = voltAvail(z,1) - voltage(2);
+    cmprsn(z,3) = voltAvail(z,1) - voltage(3);
+end
+[indexVal1,index1] = min(abs(cmprsn(1:length(voltAvail),1)));
+[indexVal2,index2] = min(abs(cmprsn(1:length(voltAvail),2)));
+[indexVal3,index3] = min(abs(cmprsn(1:length(voltAvail),3)));
+
+voltage(1) = voltAvail(index1);
+voltage(2) = voltAvail(index2);
+voltage(3) = voltAvail(index3);
+current = voltage/Rnet;
+muB = current*n*A*tempVar;
 
 LMN_magtorquers = cross(muB,BB);
 
