@@ -5,8 +5,6 @@
 const int gyro_add = 0x68;
 const int magmeter_add = 0x1E;
 
-const double pi = 3.14159;
-
 double Bx,By,Bz;
 double B[3];
 double Bx_e,By_e,Bz_e;
@@ -16,6 +14,11 @@ double Wx_e,Wy_e,Wz_e;
 double W_prev[3] = {0,0,0};
 double B_prev[3] = {0,0,0};
 double current[3];
+double voltage[3];
+double muB[3];
+double VscaleFctr = 11.59057;
+double rsltn = 255;
+double analogOut[3];
 
 int c = 0;                                  //in error checking fn
 
@@ -33,7 +36,7 @@ void setup() {
   Wire.write(0x02);
   Wire.write(0x00);
   Wire.endTransmission(true);
-
+  
   find_error();
   delay(50);
 }
@@ -78,6 +81,7 @@ void navigation(double B[3],double W[3])
     B_prev[1] = B[1];
     B_prev[2] = B[2];
   }
+
   else
   {
     for(int i = 0;i < 3;i++)
@@ -106,6 +110,7 @@ void loop() {
   W[0] = Wx;
   W[1] = Wy;
   W[2] = Wz;
+
   
   //-----------------------------------------------------//
 
@@ -122,6 +127,7 @@ void loop() {
   B[0] = Bx;
   B[1] = By;
   B[2] = Bz;
+
   navigation(B,W);                                          //filter
   
   //----------------------------------------------------//
@@ -129,22 +135,38 @@ void loop() {
   vctrmnpltn vctr1;
   vctr1.cross(W,B);
   double WxB[] = {vctr1.resultant[0],vctr1.resultant[1],vctr1.resultant[2]};
-  double k = 67200.0;
+  double k = 166.67;
   for(int i = 0;i < 3;i++)
   {
-    current[i] = (k*WxB[i])/(n*A);                                                  //Bdot control
+    muB[i] = k*WxB[i];                                      //control
   }
 
-  double sum_abs_current = abs(current[0])+abs(current[1])+abs(current[2]);
-  double norm_current = sqrt(pow(current[0],2) + pow(current[1],2) + pow(current[2],2));
-  if (sum_abs_current > saturation_current)
+  double sum_abs_muB = abs(muB[0])+abs(muB[1])+abs(muB[2]);
+  double norm_muB = sqrt(pow(muB[0],2) + pow(muB[1],2) + pow(muB[2],2));
+  if (sum_abs_muB > muBmax)
   {
     for(int i = 0;i < 3;i++)
     {
-      current[i] = (current[i]*saturation_current)/norm_current;                    //Saturation adjustment
+      muB[i] = (muB[i]*muBmax)/norm_muB;
     }
   }
 
-  //------------------------------------------------------//
+  for(int i = 0;i < 3;i++)
+  {
+    current[i] = muB[i]/(n*A*aFctr);                      //0 - 0.2 Am2
+    voltage[i] = current[i]*Rnet*VscaleFctr;              //0 - 0.4v mapped to 0 - 5v
+    analogOut[i] = voltage[i]*(rsltn/5);                  //Into 0 - 255 values
+  }
 
+  //-------------------------------------------------------//
+  
+  Serial.print("Voltage: ");
+  for(int i = 0;i < 3;i++)
+  {
+    Serial.print(round(analogOut[i]));
+    Serial.print("  ");
+  }
+  Serial.println();
+  delay(1000);
+  
 }
