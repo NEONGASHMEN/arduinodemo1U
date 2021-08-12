@@ -8,12 +8,11 @@ current = 0;
 N = 0;
 
 % Fixed stuff
-length = 70e-3;
+length = 80e-3;
 moment = 0.2;
-voltage = 5;
-RperLength = 0.155;
-rodRadius = 5e-3;
-muR = 1453;          %iron
+RperLength = 0.3386;
+rodRadius = 6e-3;
+muR = 1453;          %stnless steel 430FR
 maxCurrent = 0.438;
 
 %Stuff
