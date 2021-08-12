@@ -13,7 +13,6 @@ moment = 0.2;
 RperLength = 0.3386;
 rodRadius = 6e-3;
 muR = 1453;          %stnless steel 430FR
-maxCurrent = 0.438;
 
 %Stuff
 currentMatrix = zeros(401,1);
