@@ -2,8 +2,8 @@
 #include "vctrmnpltn.h"
 #include "sensor_params.h"
 
-const int gyro_add = 0x68;
-const int magmeter_add = 0x1E;
+const uint8_t gyro_add = 0x68;
+const uint8_t magmeter_add = 0x1E;
 
 double Bx,By,Bz;
 double B[3];
@@ -27,18 +27,23 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   Wire.begin();
-  Wire.beginTransmission(gyro_add);
-  Wire.write(0x6B);                             //reset registry
-  Wire.write(0x00);
-  Wire.endTransmission(true);
-
-  Wire.beginTransmission(magmeter_add);
-  Wire.write(0x02);
-  Wire.write(0x00);
-  Wire.endTransmission(true);
+  
+  write2reg(gyro_add,0x6B,0x00);           //device reset
+  
+  write2reg(magmeter_add,0x00,0x70);       //output rate 15 per sec
+  write2reg(magmeter_add,0x01,0x20);       //range slctn +/-1.3Gauss
+  write2reg(magmeter_add,0x02,0x00);       //cont measuremnt mode
   
   find_error();
   delay(50);
+}
+
+void write2reg(uint8_t add, uint8_t reg, uint8_t value)
+{
+  Wire.beginTransmission(add);
+  Wire.write(reg);
+  Wire.write(value);
+  Wire.endTransmission(true);
 }
 
 void find_error()
@@ -101,7 +106,7 @@ void loop() {
   Wx = (Wire.read()<<8)|(Wire.read());
   Wy = (Wire.read()<<8)|(Wire.read());
   Wz = (Wire.read()<<8)|(Wire.read());
-  Wx = Wx/131.0 - Wx_e;
+  Wx = Wx/131.0 - Wx_e;                                   //lsb per unit rad = 131
   Wy = Wy/131.0 - Wy_e;
   Wz = Wz/131.0 - Wz_e;
   Wx = (Wx*pi)/180.00;                                    //into radians
@@ -110,7 +115,6 @@ void loop() {
   W[0] = Wx;
   W[1] = Wy;
   W[2] = Wz;
-
   
   //-----------------------------------------------------//
 
@@ -120,14 +124,14 @@ void loop() {
   Wire.requestFrom(magmeter_add,6,true);                    //0x03,04,05,06,07,08 LSB and MSB values
   Bx = ((Wire.read()<<8)|(Wire.read()))/1090.0;
   Bz = ((Wire.read()<<8)|(Wire.read()))/1090.0;
-  By = ((Wire.read()<<8)|(Wire.read()))/1090.0;             //Lsb per unit = 1090 for +/-1.3Ga
+  By = ((Wire.read()<<8)|(Wire.read()))/1090.0;             //Lsb per unit = 1090 for +/-1.3Gauss
   Bx = Bx*1E-4;
   By = By*1E-4;
   Bz = Bz*1E-4;                                             //into Teslas
   B[0] = Bx;
   B[1] = By;
   B[2] = Bz;
-
+  
   navigation(B,W);                                          //filter
   
   //----------------------------------------------------//
