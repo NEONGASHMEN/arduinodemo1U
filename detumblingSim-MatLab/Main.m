@@ -141,7 +141,7 @@ disp(['Mean residual omega: ' num2str(meanResidualW)]);
 disp(['Max residual omega: ' num2str(maxResidualW)]);
 
 %%plot x y z
-fig0 = figure();
+fig0 = figure('Name','Pstn V Time','NumberTitle','off');
 plot(tout,Xout,'r-');
 hold on
 plot(tout,Yout,'g-');
@@ -149,7 +149,7 @@ hold on
 plot(tout,Zout,'b-');
 
 %%plot Bx By Bz wrt BInertial frame
-fig1 = figure();
+fig1 = figure('Name','Field vals V Time','NumberTitle','off');
 plot(tout,Bxs,'b-','Linewidth',2);
 hold on
 plot(tout,Bys,'g-','LineWidth',2);
@@ -164,7 +164,7 @@ ylabel('B components in T');
 xlabel('Time');
 
 %%Plot Bnorm wrt Inertial frame
-fig2 = figure();
+fig2 = figure('Name','Field norm V Time','NumberTitle','off');
 plot(tout,Bnorm,'LineWidth',3);
 xlabel('Time');
 ylabel('B');
@@ -172,7 +172,7 @@ ylabel('Magnetic field in T');
 xlabel('Time');
 
 %%Plot Angular Velocity
-fig3 = figure();
+fig3 = figure('Name','Angular velocity V Time','NumberTitle','off');
 plot(tout,pqrdot_out,'LineWidth',2);
 hold on 
 % plot(tout,pqrdot_measured,'--');
@@ -181,5 +181,5 @@ xlabel('Time');
 ylabel('Angular Velocity');
 
 %%Plot current
-fig4 = figure();
+fig4 = figure('Name','Current V Time','NumberTitle','off');
 plot(tout,currentmatrix(1:2712,1:3));
