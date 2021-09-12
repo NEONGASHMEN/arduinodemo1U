@@ -1,7 +1,7 @@
 function derivative = Satellite(t,state)
 
-global BB invI I Bfieldmeasured pqrdotmeasured
-global Bfieldnav pqrdotnav current voltage
+global BB invI I Bfieldmeasured pqrdotmeasured trgt
+global Bfieldnav pqrdotnav current voltage muB
 
 %%Earth and sat params
 Earth
@@ -27,8 +27,14 @@ acc = Fgrav/m;
 
 %%Mag stuff
 BI = [0;0;0];
-BI(3) = 0.008;
+BI(1) = 0.008;
 BB = TIBquat(q0123)'*BI;
+
+deed = 1;
+if (pqrdot(3) < 0.0003) & (deed == 1)
+    trgt = 1;
+    deed = 0;
+end
 
 %%Bfield and ang velocty measured from snsr
 [Bfieldmeasured,pqrdotmeasured] = Sensor(BB,pqrdot);
