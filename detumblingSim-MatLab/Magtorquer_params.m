@@ -1,11 +1,12 @@
 n = 250;                    %%No of turns
 rodRadius = 5e-3;           %%torquer rod
 muR = 1453;                 %%steel core
-length = 70e-3;
+length = 80e-3;
 A = pi*(rodRadius^2);       %%Area of cs
-RperLength = 0.155;         
+RperLength = 0.3386;         
 Rnet = RperLength*2*pi*rodRadius*n;     %%Net R
-voltAvail = (-5:(5/255):5)';            %%Arduino resolution 256
+rsltn = 255;            %%Arduino resolution 256
+voltAvail = (-5:(5/rsltn):5)';
 
 % demagnetisation fctr
 Nd = (4*(log(length/rodRadius) - 1))/(((length^2)/(rodRadius^2))-(4*log(length/rodRadius)));
