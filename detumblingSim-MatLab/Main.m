@@ -11,8 +11,8 @@ close all
 disp('Sim started');
 
 tic
-global BB Bfieldmeasured pqrdotmeasured current voltage
-global Bfieldnav pqrdotnav Bfieldnavprev pqrdotnavprev
+global BB Bfieldmeasured pqrdotmeasured current voltage muB
+global Bfieldnav pqrdotnav Bfieldnavprev pqrdotnavprev trgt
 
 %%Earth and orbit params
 Earth
@@ -30,9 +30,9 @@ q = 0;
 r = 0;
 pqr = [p q r];
 q0123_0 = EulerAngles2Quaternions(pqr);
-pdot = 0.174533;
+pdot = 0;
 qdot = 0;
-rdot = 0;
+rdot = 0.174533;
 state = [x0 y0 z0 xdot0 ydot0 zdot0 q0123_0 pdot qdot rdot];
 
 
@@ -43,6 +43,8 @@ tfinal = no_of_orbs*period;
 timestep = 1;
 tout = 0:timestep:tfinal;
 stateout = zeros(length(tout),length(state));
+trgt = 0;
+deed = 1;
 
 %%Initialising mag matrices
 Bxs = zeros(length(tout),1);    %%B field from IGRF
@@ -61,9 +63,12 @@ pqrdot_measured = zeros(length(tout),3);
 pqrdot_navigation = zeros(length(tout),3);
 pqrdotnavprev = [0;0;0];
 
-%%Initialising current matrix
+%%Initialising other matrices
 currentmatrix = zeros(length(tout),4);
 voltagematrix = zeros(length(tout),4);
+muBmatrix = zeros(length(tout),4);
+powermatrix = zeros(length(tout),1);
+power = [0 0 0];
 
 %%RK4
 state = state';
@@ -105,7 +110,22 @@ for i = 1:length(tout)
     voltagematrix(i,2) = voltage(2);
     voltagematrix(i,3) = voltage(3);
     voltagematrix(i,4) = norm(voltage);
+
+    muBmatrix(i,1) = muB(1);
+    muBmatrix(i,2) = muB(2);
+    muBmatrix(i,3) = muB(3);
+    muBmatrix(i,4) = norm(muB);
     
+    power(1) = current(1)*voltage(1);
+    power(2) = current(2)*voltage(2);
+    power(3) = current(3)*voltage(3);
+    powermatrix(i,1) = sum(abs(power));
+    
+    if (trgt == 1) & (deed == 1)
+        t_dtmbl = i;
+        deed = 0;
+    end
+
     if mod(i,10) == 0
         perc = (i/length(tout))*100;
         disp(['Percentage completed: ' num2str(perc)]);
@@ -128,7 +148,6 @@ disp('Simulation completed');
 toc
 
 %%Print critical values
-t_dtmbl = 600;
 meanResidualW(1) = mean(abs(pqrdot_out(t_dtmbl:length(tout),1)));
 meanResidualW(2) = mean(abs(pqrdot_out(t_dtmbl:length(tout),2)));
 meanResidualW(3) = mean(abs(pqrdot_out(t_dtmbl:length(tout),3)));
@@ -139,6 +158,7 @@ maxResidualW(3) = max(abs(pqrdot_out(t_dtmbl:length(tout),3)));
 
 disp(['Mean residual omega: ' num2str(meanResidualW)]);
 disp(['Max residual omega: ' num2str(maxResidualW)]);
+disp(['Detumbling in: ' num2str(t_dtmbl/60) ' mins']);
 
 %%plot x y z
 fig0 = figure('Name','Pstn V Time','NumberTitle','off');
@@ -183,3 +203,7 @@ ylabel('Angular Velocity');
 %%Plot current
 fig4 = figure('Name','Current V Time','NumberTitle','off');
 plot(tout,currentmatrix(1:2712,1:3));
+
+%%Plot power
+fig5 = figure('Name','Power draw V Time','NumberTitle','off');
+plot(tout,powermatrix);
