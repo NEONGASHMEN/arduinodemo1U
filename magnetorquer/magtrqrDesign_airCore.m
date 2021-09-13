@@ -14,7 +14,7 @@ b = 80e-3;
 A = l*b;
 muB = 0.2;
 rho = 1.68e-8;
-Rperlength = rho/0.0509e-6;
+Rperlength = 0.212872;
 
 interval = 10:10:200;
 nMatrix = zeros(length(interval),1);
