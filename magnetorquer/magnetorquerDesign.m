@@ -10,9 +10,11 @@ N = 0;
 % Fixed stuff
 length = 80e-3;
 moment = 0.2;
-RperLength = 0.3386;
+RperLength = 0.212872;  %%28 AWG
 rodRadius = 6e-3;
 muR = 1453;          %stnless steel 430FR
+wireDia = 0.32;
+turns_per_layer = length/wireDia;
 
 %Stuff
 currentMatrix = zeros(401,1);
