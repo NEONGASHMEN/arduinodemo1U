@@ -202,7 +202,7 @@ ylabel('Angular Velocity');
 
 %%Plot current
 fig4 = figure('Name','Current V Time','NumberTitle','off');
-plot(tout,currentmatrix(1:2712,1:3));
+plot(tout,currentmatrix(:,1:3));
 
 %%Plot power
 fig5 = figure('Name','Power draw V Time','NumberTitle','off');
