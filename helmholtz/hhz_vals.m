@@ -12,7 +12,7 @@ close all
  
 %mu = 12.56e-7;
 k = 0.8991e-6;      
-r = 0.15;           %radius of coil in metre
+r = 0.25;           %radius of coil in metre
 B = 0.008;          %magnetic field in gauss
  
 rho = 1.68e-8;      %resistivity of copper
