@@ -1,7 +1,7 @@
 function muB = Control(Bfieldnav,pqrdotnav)
     Magtorquer_params
     
-    k = 166.67;
+    k = 650;
 
     WxB = cross(pqrdotnav,Bfieldnav);
 %     muBhat = WxB/norm(WxB);
