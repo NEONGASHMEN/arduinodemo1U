@@ -1,7 +1,7 @@
 n = 350;                    %%No of turns
-rodRadius = 6e-3;           %%torquer rod
+rodRadius = 2.85e-3;           %%torquer rod
 muR = 1453;                 %%steel core
-length = 80e-3;
+length = 86e-3;
 A = pi*(rodRadius^2);       %%Area of cs
 RperLength = 0.212872;      %%28 AWG
 Rnet = RperLength*2*pi*rodRadius*n;     %%Net R

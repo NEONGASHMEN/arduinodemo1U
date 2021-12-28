@@ -27,7 +27,7 @@ acc = Fgrav/m;
 
 %%Mag stuff
 BI = [0;0;0];
-BI(1) = 0.008;
+BI(1) = 0.003;
 BB = TIBquat(q0123)'*BI;
 
 deed = 1;
