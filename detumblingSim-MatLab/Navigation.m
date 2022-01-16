@@ -1,7 +1,7 @@
 function [B_result,pqrdot_result] = Navigation(InpB,Inppqrdot)
     global Bfieldnavprev pqrdotnavprev
     
-    s = 0.3;         %%How much we believe in our measurement
+    s = 0.8;         %%How much we believe in our measurement
     
     if sum(Bfieldnavprev) + sum(pqrdotnavprev) == 0
         B_result = InpB;
@@ -18,6 +18,3 @@ function [B_result,pqrdot_result] = Navigation(InpB,Inppqrdot)
      pqrdotnavprev = pqrdot_result;
     
 end
-    
-    
-    
