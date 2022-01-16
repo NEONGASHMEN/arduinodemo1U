@@ -1,7 +1,7 @@
 function derivative = Satellite(t,state)
 
 global BB invI I Bfieldmeasured pqrdotmeasured trgt
-global Bfieldnav pqrdotnav current voltage muB
+global Bfieldnav pqrdotnav current voltage muB torq
 
 %%Earth and sat params
 Earth
@@ -27,13 +27,11 @@ acc = Fgrav/m;
 
 %%Mag stuff
 BI = [0;0;0];
-BI(1) = 0.003;
+BI(1) = 0.001;
 BB = TIBquat(q0123)'*BI;
 
-deed = 1;
-if (pqrdot(3) < 0.0003) & (deed == 1)
+if (pqrdot(3) < 0.001)
     trgt = 1;
-    deed = 0;
 end
 
 %%Bfield and ang velocty measured from snsr
@@ -44,23 +42,12 @@ end
 
 
 %%CONTROL BLOCK
-muB = Control(Bfieldnav,pqrdotnav);
+muB_cont = Control(Bfieldnav,pqrdotnav);
 Magtorquer_params
-current = muB/(n*A*tempVar);
-voltage = current*Rnet;
-cmprsn = zeros(length(voltAvail),3);
-for z = 1:length(voltAvail)
-    cmprsn(z,1) = voltAvail(z,1) - voltage(1);
-    cmprsn(z,2) = voltAvail(z,1) - voltage(2);
-    cmprsn(z,3) = voltAvail(z,1) - voltage(3);
-end
-[indexVal1,index1] = min(abs(cmprsn(1:length(voltAvail),1)));
-[indexVal2,index2] = min(abs(cmprsn(1:length(voltAvail),2)));
-[indexVal3,index3] = min(abs(cmprsn(1:length(voltAvail),3)));
+current_cont = muB_cont/(n*A*tempVar);
+voltage_cont = current_cont*Rnet;
 
-voltage(1) = voltAvail(index1);
-voltage(2) = voltAvail(index2);
-voltage(3) = voltAvail(index3);
+voltage = Analog(voltage_cont);
 current = voltage/Rnet;
 muB = current*n*A*tempVar;
 
@@ -71,6 +58,7 @@ PQRMAT = [0 -pdot -qdot -rdot;pdot 0 rdot -qdot;qdot -rdot 0 pdot;rdot qdot -pdo
 q0123dot = 0.5*PQRMAT*q0123;
 H = I*pqrdot;
 pqrddot = invI*(LMN_magtorquers - cross(pqrdot,H));
+torq = LMN_magtorquers - cross(pqrdot,H);
 
 derivative = [vel;acc;q0123dot;pqrddot];
 
