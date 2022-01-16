@@ -11,7 +11,7 @@ close all
 disp('Sim started');
 
 tic
-global BB Bfieldmeasured pqrdotmeasured current voltage muB
+global BB Bfieldmeasured pqrdotmeasured current voltage muB torq
 global Bfieldnav pqrdotnav Bfieldnavprev pqrdotnavprev trgt
 
 %%Earth and orbit params
@@ -44,7 +44,7 @@ timestep = 1;
 tout = 0:timestep:tfinal;
 stateout = zeros(length(tout),length(state));
 trgt = 0;
-deed = 1;
+deed = 0;
 
 %%Initialising mag matrices
 Bxs = zeros(length(tout),1);    %%B field from IGRF
@@ -68,6 +68,8 @@ currentmatrix = zeros(length(tout),4);
 voltagematrix = zeros(length(tout),4);
 muBmatrix = zeros(length(tout),4);
 powermatrix = zeros(length(tout),1);
+torqmatrix = zeros(length(tout),3);
+angaccmatrix = zeros(length(tout),3);
 power = [0 0 0];
 
 %%RK4
@@ -121,11 +123,19 @@ for i = 1:length(tout)
     power(3) = current(3)*voltage(3);
     powermatrix(i,1) = sum(abs(power));
     
-    if (trgt == 1) & (deed == 1)
+    torqmatrix(i,1) = torq(1);
+    torqmatrix(i,2) = torq(2);
+    torqmatrix(i,3) = torq(3);
+    
+    angaccmatrix(i,1) = torq(1)*0.006;
+    angaccmatrix(i,1) = torq(1)*0.006;
+    angaccmatrix(i,1) = torq(1)*0.006;
+    
+    if (trgt == 1) & (deed == 0)
         t_dtmbl = i;
-        deed = 0;
+        deed = 1;
     end
-
+    
     if mod(i,10) == 0
         perc = (i/length(tout))*100;
         disp(['Percentage completed: ' num2str(perc)]);
@@ -142,23 +152,32 @@ Bnorm = sqrt(Bxs.^2 + Bys.^2 +Bzs.^2);
 Xout = stateout(:,1);
 Yout = stateout(:,2);
 Zout = stateout(:,3);
+no_of_discretes = max([length(unique(muBmatrix(:,1)));length(unique(muBmatrix(:,2)));length(unique(muBmatrix(:,3)))]);
 
 %%Display
 disp('Simulation completed');
 toc
+disp(' ');
 
 %%Print critical values
+if deed == 1
+    disp(['Detumbling in: ' num2str(t_dtmbl/60) ' mins']);
+else
+    t_dtmbl = 1200;
+    disp("Angular velocity have never crossed the min value specified");
+    disp("Average value calculated from 20th min onwards");
+end
+meanResidualW(1) = mean(abs(pqrdot_out(t_dtmbl:length(tout),1)));
 meanResidualW(2) = mean(abs(pqrdot_out(t_dtmbl:length(tout),2)));
 meanResidualW(3) = mean(abs(pqrdot_out(t_dtmbl:length(tout),3)));
 
-meanResidualW(1) = mean(abs(pqrdot_out(t_dtmbl:length(tout),1)));
 maxResidualW(1) = max(abs(pqrdot_out(t_dtmbl:length(tout),1)));
 maxResidualW(2) = max(abs(pqrdot_out(t_dtmbl:length(tout),2)));
 maxResidualW(3) = max(abs(pqrdot_out(t_dtmbl:length(tout),3)));
 
-disp(['Mean residual omega: ' num2str(meanResidualW)]);
-disp(['Max residual omega: ' num2str(maxResidualW)]);
-disp(['Detumbling in: ' num2str(t_dtmbl/60) ' mins']);
+disp(['Mean residual omega: ' num2str(meanResidualW(3))]);
+disp(['Max residual omega: ' num2str(maxResidualW(3))]);
+disp(['No of discrete outputs: ' num2str(no_of_discretes)]);
  
 %%plot x y z
 fig0 = figure('Name','Pstn V Time','NumberTitle','off');
@@ -174,12 +193,12 @@ plot(tout,Bxs,'b-','Linewidth',2);
 hold on
 plot(tout,Bys,'g-','LineWidth',2);
 plot(tout,Bzs,'r-','LineWidth',2);
-plot(tout,Bxm,'b--');
-plot(tout,Bym,'g--');
-plot(tout,Bzm,'r--');
-plot(tout,Bxn,'k--');
-plot(tout,Byn,'c--');
-plot(tout,Bzn,'m--');
+% plot(tout,Bxm,'b--');
+% plot(tout,Bym,'g--');
+% plot(tout,Bzm,'r--');
+% plot(tout,Bxn,'k--');
+% plot(tout,Byn,'c--');
+% plot(tout,Bzn,'m--');
 ylabel('B components in T');
 xlabel('Time');
 
@@ -197,13 +216,23 @@ plot(tout,pqrdot_out,'LineWidth',2);
 hold on 
 % plot(tout,pqrdot_measured,'--');
 % plot(tout,pqrdot_navigation,'--','LineWidth',2);
-xlabel('Time');
-ylabel('Angular Velocity');
+xlabel('Time (s)');
+ylabel('Angular Velocity (rad/s)');
 
 %%Plot current
 fig4 = figure('Name','Current V Time','NumberTitle','off');
 plot(tout,currentmatrix(:,1:3));
+ylabel('Current (A)');
+xlabel('Time (s)');
 
 %%Plot power
 fig5 = figure('Name','Power draw V Time','NumberTitle','off');
 plot(tout,powermatrix);
+xlabel('Time (s)');
+ylabel('Power (W)');
+
+%%Plot torque
+fig6 = figure('Name','Torque V Time','NumberTitle','off');
+plot(tout,torqmatrix);
+xlabel('Time (s)');
+ylabel('Torque (Nm)');
