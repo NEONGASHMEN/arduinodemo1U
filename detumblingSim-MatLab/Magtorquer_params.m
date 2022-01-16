@@ -5,8 +5,6 @@ length = 86e-3;
 A = pi*(rodRadius^2);       %%Area of cs
 RperLength = 0.212872;      %%28 AWG
 Rnet = RperLength*2*pi*rodRadius*n;     %%Net R
-rsltn = 255;                            %%Arduino resolution 256
-voltAvail = (-5:(5/rsltn):5)';
 
 % demagnetisation fctr
 Nd = (4*(log(length/rodRadius) - 1))/(((length^2)/(rodRadius^2))-(4*log(length/rodRadius)));
