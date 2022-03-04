@@ -12,7 +12,7 @@ close all
 %mu = 12.56e-7;
 k = 0.8991e-6;      
 r = 0.265;           %radius of coil in metre
-B = 0.003;          %magnetic field in Tesla
+B = 0.001;          %magnetic field in Tesla
  
 rho = 1.68e-8;      %resistivity of copper
 A_wire = 2.62e-6;   %area of 13 gauge wire
