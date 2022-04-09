@@ -1,2 +1,3 @@
 # arduinodemo1U
-This repo contains resources and info on the arduino demo for a 1U cubesat. 
+NB: Repo depreciated. Moved to https://www.github.com/NEONGASHMEN/ADCS-GSP/
+ 
